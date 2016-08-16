@@ -1,3 +1,4 @@
+#pragma once 
 /*
 like strtod in stdlib, but supports only decimal numbers of the form
 
