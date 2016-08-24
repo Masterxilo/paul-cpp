@@ -44,4 +44,46 @@ void itoa_backwards_signed(int digits, int i, char* last);
 // writes digits + 1 characters, inserting a dot before the final digit
 void ulltoa_backwards_dotted(int digits, long long i, char* last);
 
+// exercises ftostr_fast etc.
 void demo1();
+
+#ifdef __CUDACC__
+#define PAULFUNC inline __host__ __device__
+#else
+#define PAULFUNC inline
+#endif
+
+// yields True if n is divisible by m, and yields False if it is not. 
+template<typename T1, typename T2>
+PAULFUNC bool divisible(T1 n, T2 m) {
+    return n % m == 0;
+}
+
+PAULFUNC bool aligned(void* p, int m) {
+    return divisible((unsigned long long) p, 8ull);
+}
+
+// TODO 32-bit version could be more efficient
+PAULFUNC bool after(void* a, void* b) {
+    return (unsigned long long)a >= (unsigned long long)b;
+}
+PAULFUNC bool strictly_after(void* a, void* b) {
+    return (unsigned long long)a > (unsigned long long)b;
+}
+
+#include <assert.h>
+#include <float.h>
+
+// TODO better device implementation
+PAULFUNC float assertFinite(float value) {
+#ifdef _DEBUG
+#ifdef __CUDACC__
+    assert(1.f * value == value);
+#else
+    assert(_fpclass(value) == _FPCLASS_PD || _fpclass(value) == _FPCLASS_PN || _fpclass(value) == _FPCLASS_PZ ||
+        _fpclass(value) == _FPCLASS_ND || _fpclass(value) == _FPCLASS_NN || _fpclass(value) == _FPCLASS_NZ);
+        //, "value = %f is not finite", value);
+#endif
+#endif
+    return value;
+}
