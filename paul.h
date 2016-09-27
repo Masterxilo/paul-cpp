@@ -59,8 +59,8 @@ PAULFUNC bool divisible(T1 n, T2 m) {
     return n % m == 0;
 }
 
-PAULFUNC bool aligned(void* p, int m) {
-    return divisible((unsigned long long) p, 8ull);
+PAULFUNC bool aligned(void* p, unsigned int m) {
+    return divisible((unsigned long long) p, m);
 }
 
 // TODO 32-bit version could be more efficient
@@ -69,6 +69,11 @@ PAULFUNC bool after(void* a, void* b) {
 }
 PAULFUNC bool strictly_after(void* a, void* b) {
     return (unsigned long long)a > (unsigned long long)b;
+}
+
+PAULFUNC int nextEven(int i) {
+    if (i % 2 == 0) return i;
+    return i + 1;
 }
 
 #include <assert.h>
